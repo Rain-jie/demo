@@ -132,4 +132,10 @@
             </plugin>
         </plugins>
     </build>
+    <distributionManagement>    
+    <repository>    
+      <id>deploymentRepo</id>    
+      <url>${repo.internal.snapshots.url}</url>
+    </repository>      
+  </distributionManagement>       
 </project>
