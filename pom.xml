@@ -132,4 +132,10 @@
             </plugin>
         </plugins>
     </build>
+         <distributionManagement>
+    <repository>
+      <id>deploymentRepo</id>
+      <url>scp://repo/maven2</url>
+    </repository>
+  </distributionManagement>
 </project>
