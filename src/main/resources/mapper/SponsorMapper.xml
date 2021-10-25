@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deal.demo.dao.SponsorMapper">
+
+  <resultMap id="BaseResultMap" type="com.deal.demo.model.Sponsor">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="sponsor_name" jdbcType="VARCHAR" property="sponsorName" />
+    <result column="sponsor_person_name" jdbcType="VARCHAR" property="sponsorPersonName" />
+    <result column="sponsor_price" jdbcType="INTEGER" property="sponsorPrice" />
+    <result column="sponsor_acticity" jdbcType="VARCHAR" property="sponsorActivity" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id,sponsor_name, sponsor_person_name,sponsor_price,sponsor_acticity, create_time, update_time
+  </sql>
+  <!--根据条件获取该用户所得到的赞助企业信息-->
+  <select id="getSponsor" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List"/>
+    from
+        client_sponsor
+    <where>
+      1=1
+    </where>
+    ORDER BY create_time DESC
+  </select>
+  <!--新增赞助企业信息-->
+  <insert id="insertSponsor" parameterType="com.deal.demo.model.Sponsor" useGeneratedKeys="true" keyProperty="id">
+    insert into client_sponsor
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(sponsorName)">
+        sponsor_name,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(sponsorPersonName)">
+        sponsor_person_name,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(sponsorPrice)">
+        sponsor_price,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(sponsorActivity)">
+        sponsor_acticity,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(createTime)">
+        create_time
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(sponsorName)">
+        #{sponsorName,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(sponsorPersonName)">
+        #{sponsorPersonName, jdbcType = VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(sponsorPrice)">
+        #{sponsorPrice,jdbcType=INTEGER},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(sponsorActivity)">
+        #{sponsorActivity,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(createTime)">
+        #{createTime,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  <!--根据主键ID获取此赞助企业信息-->
+  <select id="selectSponsor" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List"/>
+    from
+        client_sponsor
+    <where>
+        id=#{sponsorId,jdbcType=INTEGER}
+    </where>
+  </select>
+  <!--更新用户基础信息-->
+  <update id="updateSponsor" parameterType="com.deal.demo.model.Sponsor">
+    update client_sponsor
+    <set>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(sponsorName)">
+        sponsor_name=#{sponsorName,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(sponsorPersonName)">
+        sponsor_person_name=#{sponsorPersonName, jdbcType = VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(sponsorPrice)">
+        sponsor_price=#{sponsorPrice,jdbcType=INTEGER},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(sponsorActivity)">
+        sponsor_acticity=#{sponsorActivity,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(updateTime)">
+        update_time=#{updateTime,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--清除赞助企业信息-->
+  <delete id="deleteSponsor" parameterType="java.lang.Integer">
+    delete from
+        client_sponsor
+    where
+        id=#{sponsorId,jdbcType=INTEGER}
+  </delete>
+</mapper>

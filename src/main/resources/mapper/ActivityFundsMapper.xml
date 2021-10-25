@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deal.demo.dao.ActivityFundsMapper">
+
+  <resultMap id="BaseResultMap" type="com.deal.demo.model.ActivityFunds">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="activity_name" jdbcType="VARCHAR" property="activityName" />
+    <result column="activity_funds" jdbcType="INTEGER" property="activityFunds" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id,activity_name,activity_funds,create_time, update_time
+  </sql>
+  <!--根据条件获取活动信息-->
+  <select id="getActivityFunds" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List"/>
+    from
+        client_activity_funds
+    <where>
+      1=1
+    </where>
+    ORDER BY create_time DESC
+  </select>
+  <!--新增活动信息-->
+  <insert id="registerActivityFunds" parameterType="com.deal.demo.model.ActivityFunds" useGeneratedKeys="true" keyProperty="id">
+    insert into client_activity_funds
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityName)">
+        activity_name,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityFunds)">
+        activity_funds,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(createTime)">
+        create_time
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityName)">
+        #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityFunds)">
+        #{activityFunds,jdbcType=INTEGER},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(createTime)">
+        #{createTime,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  <!--更新活动基础信息-->
+  <update id="updateActivityFunds" parameterType="com.deal.demo.model.ActivityFunds">
+    update client_activity_funds
+    <set>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityName)">
+        activity_name= #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityFunds)">
+        activity_funds = #{activityFunds,jdbcType=INTEGER},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(updateTime)">
+        update_time=#{updateTime,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--清除赞助企业信息-->
+  <delete id="deleteActivityFunds" parameterType="java.lang.Integer">
+    delete from
+        client_activity_funds
+    where
+        id=#{activityFundsId,jdbcType=INTEGER}
+  </delete>
+</mapper>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deal.demo.dao.JoinMapper">
+
+  <resultMap id="BaseResultMap" type="com.deal.demo.model.Join">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="join_name" jdbcType="VARCHAR" property="joinName" />
+    <result column="join_activity_name" jdbcType="VARCHAR" property="joinActivityName" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id,join_name, join_activity_name,create_time, update_time
+  </sql>
+  <!--根据条件获取活动信息-->
+  <select id="getJoinActivity" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List"/>
+    from
+        client_join
+    <where>
+      1=1
+    </where>
+    ORDER BY create_time DESC
+  </select>
+  <!--新增活动信息-->
+  <insert id="insertJoin" parameterType="com.deal.demo.model.Join" useGeneratedKeys="true" keyProperty="id">
+    insert into client_join
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(joinName)">
+        join_name,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(joinActivityName)">
+        join_activity_name,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(createTime)">
+        create_time
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(joinName)">
+        #{joinName,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(joinActivityName)">
+        #{joinActivityName,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(createTime)">
+        #{createTime,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  <!--更新活动基础信息-->
+  <update id="updateJoinActivity" parameterType="com.deal.demo.model.Join">
+    update client_join
+    <set>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(joinName)">
+        join_name= #{joinName,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(joinActivityName)">
+        join_activity_name = #{joinActivityName,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(updateTime)">
+        update_time=#{updateTime,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--清除赞助企业信息-->
+  <delete id="deleteJoinActivity" parameterType="java.lang.Integer">
+    delete from
+        client_join
+    where
+        id=#{joinActivityId,jdbcType=INTEGER}
+  </delete>
+</mapper>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户注册</title>
+    <link type="text/css" rel="stylesheet" href="./js/layui/css/layui.css">
+    <script type="text/javascript" src="./js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="./js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="./js/layui/layui.js"></script>
+</head>
+<script>
+    //注册
+    function register() {
+        //获取用户名
+        var userName=  $("[name='userName']").val()
+        //用户账号
+        var userAccount=  $("[name='userAccount']").val()
+        //获取密码
+        var userPwd = $("[name='userPwd']").val();
+        //确认密码
+        var userPwd1 = $("[name='userPwd1']").val();
+        //手机号
+        if (userName != "") {
+            if (userPwd != "") {
+                if (userPwd1 != "") {
+                    if (userPwd == userPwd1) {
+                        $.ajax({
+                            type: "POST",
+                            dataType: "json",
+                            url: "http://localhost:8081/platform/api/user/phone/registerUser",
+                            contentType: "application/json",
+                            data:JSON.stringify({
+                                "userName":userName,
+                                "userAccount":userAccount,
+                                "userPassword":userPwd
+                            }),
+                            success: function (result) {
+                                if (result.response.resStatus == '000') {
+                                    location.href = "/platform/login.html"
+                                } else {
+                                    alert(result.response.data)
+                                }
+                            }
+                        });
+                    } else {
+                        alert("两次密码必须一致~")
+                    }
+                } else {
+                    alert("确认密码也不允许为空哦~")
+                }
+            } else {
+                alert("密码不允许为空哦~")
+            }
+        } else {
+            alert("用户名不允许为空哦~")
+        }
+
+    }
+
+</script>
+<style type="text/css">
+    html{height: 100%}
+    body{
+        background-image: url("/platform/img/bg.jpg");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+    }
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    #box{
+        height:40%;width:30%;
+        position:fixed;
+        top:0;right:0;bottom:0;left:0;
+        margin:auto;
+    }
+</style>
+<body>
+<div id="box">
+    <div class="login">
+        <div class="message">
+            <font size="4">
+            校园活动管理系统平台注册
+            </font>
+        </div>
+        <div id="darkbannerwrap"></div>
+        <form method="post" class="layui-form">
+            <input name="userName" placeholder="用户昵称"  type="text" lay-verify="required" class="layui-input" >
+            <br/>
+            <input name="userAccount" placeholder="用户账号"  type="text" lay-verify="required" class="layui-input" >
+            <br/>
+            <input name="userPwd" lay-verify="required" placeholder="密码"  type="password" class="layui-input">
+            <br/>
+            <input name="userPwd1" lay-verify="required" placeholder="确认密码"  type="password" class="layui-input">
+            <br/>
+            <input value="注册" lay-submit lay-filter="login" style="width:100%;" onclick="register()" type="button">
+        </form>
+    </div>
+</div>
+</body>
+</html>

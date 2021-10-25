@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deal.demo.dao.UserMapper">
+
+  <resultMap id="BaseResultMap" type="com.deal.demo.model.User">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_account" jdbcType="VARCHAR" property="userAccount" />
+    <result column="user_password" jdbcType="VARCHAR" property="userPassword" />
+    <result column="user_head" jdbcType="VARCHAR" property="userHead" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id,user_name, user_account,user_password,user_head, create_time, update_time
+  </sql>
+  <!--根据条件获取用户基础信息-->
+  <select id="selectUser" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List"/>
+    from
+        client_user
+    <where>
+      1=1
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(userAccount)">
+       and user_account = #{userAccount,jdbcType=VARCHAR}
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(userPassword)">
+       and user_password = #{userPassword,jdbcType=VARCHAR}
+      </if>
+    </where>
+  </select>
+  <!--用户注册-->
+  <insert id="insertUser" parameterType="com.deal.demo.model.User" useGeneratedKeys="true" keyProperty="id">
+    insert into client_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(userName)">
+        user_name,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(userAccount)">
+        user_account,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(userPassword)">
+        user_password,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(userHead)">
+        user_head,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(createTime)">
+        create_time
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(userName)">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(userAccount)">
+        #{userAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(userPassword)">
+        #{userPassword, jdbcType = VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(userHead)">
+        #{userHead,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(createTime)">
+        #{createTime,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  <!--更新用户基础信息-->
+  <update id="updateUser" parameterType="com.deal.demo.model.User">
+    update client_user
+    <set>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(userName)">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(updateTime)">
+        update_time = #{updateTime,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(userAccount)">
+         user_account = #{userAccount,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(userPassword)">
+         user_password = #{userPassword,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,1365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>校园活动管理系统平台</title>
+    <link type="text/css" rel="stylesheet" href="js/bootstrap/dist/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="./js/layui/css/layui.css">
+    <script type="text/javascript" src="./js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="./js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="./js/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./js/layui/layui.js"></script>
+</head>
+<body>
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+        <div class="layui-logo layui-hide-xs layui-bg-black">校园活动管理系统平台</div>
+        <!-- 头部区域（可配合layui 已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+            <!-- 移动端显示 -->
+            <li class="layui-nav-item layui-show-xs-inline-block layui-hide-sm" lay-header-event="menuLeft">
+                <i class="layui-icon layui-icon-spread-left"></i>
+            </li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item layui-hide layui-show-md-inline-block">
+                <a href="javascript:;" id="userName"></a>
+                <dl class="layui-nav-child">
+                        <div id="layerDemo" style="margin-bottom: 0;">
+                            <div class="layui-btn-container">
+                                <button data-method="confirmTrans" class="layui-btn">更新个人信息</button>
+                            </div>
+                        </div>
+                        <div onclick="escLogin()" style="margin-bottom: 0;">
+                            <div class="layui-btn-container">
+                                <button  class="layui-btn">退出</button>
+                            </div>
+                        </div>
+                </dl>
+            </li>
+            <li class="layui-nav-item layui-hide layui-show-md-inline-block">
+                <a href="/platform/register.html">注册</a>
+            </li>
+            <li class="layui-nav-item layui-hide layui-show-md-inline-block">
+                <a href="/platform/login.html">登录</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                <li class="layui-nav-item layui-nav-itemed">
+                    <a onclick="sponsor()">赞助企业管理</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a onclick="activity()">活动管理</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a onclick="field()" >场地管理</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a onclick="join()">参与活动人员管理</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a onclick="journalism()">新闻稿管理</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a onclick="activityFunds()">活动经费管理</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--显示主体内容-->
+    <div class="layui-body">
+        <table class="layui-hide" id="test" lay-filter="test"></table>
+        <div class="layui-footer">
+        </div>
+    </div>
+</body>
+<!--用户操作方法-->
+<script type="text/javascript">
+    //显示登录用户账号
+    var item = JSON.parse(window.sessionStorage.getItem("userId"));
+    $("#userName").html("欢迎"+item.user.userName+"用户");
+    //用户退出登录
+    function escLogin() {
+        if(item != null){
+            window.sessionStorage.removeItem("userId");
+            location.reload();
+        }
+    }
+    layui.use('layer', function(){ //独立版的layer无需执行这一句
+        //触发事件
+        var active = {
+            confirmTrans: function(){
+                //配置一个透明的询问框
+                layer.msg(
+                    '<form>\n'+
+                    '<div class="layui-form-item">\n' +
+                    '    <label class="layui-form-label">昵称</label>\n' +
+                    '    <div class="layui-input-inline">\n' +
+                    '      <input type="text" name="userName" lay-verify="required" placeholder="请输入用户昵称" autocomplete="off" class="layui-input">\n' +
+                    '    </div>\n' +
+                    '  </div>'+
+                    '<div class="layui-form-item">\n' +
+                    '    <label class="layui-form-label">密码</label>\n' +
+                    '    <div class="layui-input-inline">\n' +
+                    '      <input type="password" name="userPassword" lay-verify="required" placeholder="请输入用户密码" autocomplete="off" class="layui-input">\n' +
+                    '    </div>\n' +
+                    '  </div>\n'+
+                    '</form>'
+                    , {
+                        time: 200000, //20s后自动关闭
+                        btn:["确定","关闭"],
+                        yes:function(res) {
+                            var userId=item.user.id;
+                            var userName=$("[name='userName']").val();
+                            var userPassword=$("[name='userPassword']").val();
+                            $.ajax({
+                                type: "POST",
+                                dataType: "text",
+                                url: "http://localhost:8081/platform/api/user/phone/updateUser",
+                                contentType: "application/json",
+                                data:JSON.stringify({
+                                    "userName":userName,
+                                    "userId":userId,
+                                    "userPassword":userPassword
+                                }),
+                                success: function (result) {
+                                    var parse = JSON.parse(result);
+                                    if(parse.response.resStatus == '000' ){
+                                        //把用户信息存入会话 sessionStorage
+                                        window.sessionStorage.removeItem("userId");
+                                        location.href="/platform/login.html";
+                                    }else{
+                                        alert(parse.response.data)
+                                    }
+                                }
+                            });
+                        },
+                    });
+            }
+        };
+        $('#layerDemo .layui-btn').on('click', function(){
+            var othis = $(this), method = othis.data('method');
+            active[method] ? active[method].call(this, othis) : '';
+        });
+    });
+    function updateUser() {
+
+    }
+</script>
+<script type="text/html" id="barDemo">
+    <a class="layui-btn layui-btn-xs" lay-event="edit" data-method="offset">编辑</a>
+    <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="insert">新增</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<!--赞助企业管理操作方法-->
+<script type="text/javascript">
+    function sponsor(){
+        layui.use('table', function(){
+            var table = layui.table;
+            table.render({
+                elem: '#test',
+                where:{"pageNum":1,"pageSize":100},
+                method: "post",
+                url:'http://localhost:8081/platform/api/spnsor/phone/getSponsor',
+                parseData:function (result){
+                    return{
+                        "code": result.code,
+                        "data":result.response.data.sponserList.showList,
+                    }
+                },
+                title: '赞助企业信息'
+                ,cols: [[
+                     {field:'id', title:'ID', width:80, fixed: 'left'}
+                    ,{field:'sponsorName', title:'赞助企业名称', width:150}
+                    ,{field:'sponsorPersonName', title:'赞助负责人', width:120}
+                    ,{field:'sponsorPrice', title:'赞助金额', width:100,templet:function (price) {
+                            return price.sponsorPrice/100+'元'
+                        }}
+                    ,{field:'sponsorActivity', title:'赞助活动',width:100}
+                    ,{field:'createTime', title:'创建时间', width:180}
+                    ,{field:'updateTime', title:'更新时间', width:180}
+                    ,{field:'right', toolbar:"#barDemo", title:'操作栏', width:180}
+                ]]
+                ,page: false
+            });
+            //监听行工具事件
+            table.on('tool(test)', function(obj){
+                var data = obj.data;
+                if(obj.event === 'del'){
+                    layer.confirm('确定删除嘛', function(index){
+                        obj.del();
+                        $.get(
+                            "http://localhost:8081/platform/api/spnsor/phone/deleteSponsor",
+                            {"sponsorId":data.id},
+                            function (result) {
+                                if (result.response.resStatus == '000') {
+                                    alert("清除赞助企业信息成功")
+                                    location.reload();
+                                } else {
+                                    alert(result.response.data)
+                                }
+                            }
+                        );
+                    });
+                } else if(obj.event === 'edit'){
+                    //页面层-自定义
+                    layer.open({
+                        type: 1,
+                        title: "更新赞助企业信息",
+                        shadeClose:true,
+                        skin: 'yourclass',
+                        content: '<form class="layui-form layui-form-pane" action="">'+
+                            '    <div class="layui-form-item">'+
+                            '        <label class="layui-form-label">赞助负责人</label>'+
+                            '        <div class="layui-input-inline">'+
+                            '            <input type="text" name="sponsorPersonName" lay-verify="required" placeholder="请输入"'+
+                            '                   autoComplete="off" class="layui-input">'+
+                            '        </div>'+
+                            '    </div>'+
+                            '</form>',
+                        btn:["确定","取消"],
+                        yes:function(res) {
+                            var sponsorId=data.id
+                            var sponsorPersonName=  $("[name='sponsorPersonName']").val()
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: "http://localhost:8081/platform/api/spnsor/phone/updateSponsor",
+                                contentType: "application/json",
+                                data:JSON.stringify({
+                                    "sponsorId":sponsorId,
+                                    "sponsorPersonName":sponsorPersonName,
+                                }),
+                                success: function (result) {
+                                    if (result.response.resStatus == '000') {
+                                       alert("更新赞助企业信息成功")
+                                        location.reload();
+                                    } else {
+                                        alert(result.response.data)
+                                    }
+                                }
+                            });
+                        },
+                        cancel:function (index,layero) {
+                            layui.layer.close(index);
+                        }
+                    });
+                }else if(obj.event === 'insert'){
+                    //页面层-自定义
+                    layer.open({
+                        type: 1,
+                        title: "新增赞助企业信息",
+                        shadeClose:true,
+                        skin: 'yourclass',
+                        content: '<form class="layui-form layui-form-pane" action="">'+
+                            '    <div class="layui-form-item">'+
+                            '        <label class="layui-form-label">赞助企业名</label>'+
+                            '        <div class="layui-input-inline">'+
+                            '            <input type="text" name="sponsorName" lay-verify="required" placeholder="请输入"'+
+                            '                   autoComplete="off" class="layui-input">'+
+                            '        </div>'+
+                            '    </div>'+
+                            '    <div class="layui-form-item">'+
+                            '        <label class="layui-form-label">赞助负责人</label>'+
+                            '        <div class="layui-input-inline">'+
+                            '            <input type="text" name="sponsorPersonName" lay-verify="required" placeholder="请输入"'+
+                            '                   autoComplete="off" class="layui-input">'+
+                            '        </div>'+
+                            '    </div>'+
+                            '    <div class="layui-form-item">'+
+                            '        <label class="layui-form-label">赞助金额</label>'+
+                            '        <div class="layui-input-inline">'+
+                            '            <input type="text" name="sponsorPrice" lay-verify="required" placeholder="请输入"'+
+                            '                   autoComplete="off" class="layui-input">'+
+                            '        </div>'+
+                            '    </div>'+
+                            '    <div class="layui-form-item">'+
+                            '        <label class="layui-form-label">赞助活动</label>'+
+                            '        <div class="layui-input-inline">'+
+                            '            <input type="text" name="sponsorActivity" lay-verify="required" placeholder="请输入"'+
+                            '                   autoComplete="off" class="layui-input">'+
+                            '        </div>'+
+                            '    </div>'+
+                            '</form>',
+                        btn:["确定","取消"],
+                        yes:function(res) {
+                            var sponsorName=  $("[name='sponsorName']").val()
+                            var sponsorPersonName=  $("[name='sponsorPersonName']").val()
+                            var sponsorPrice = parseInt($("[name='sponsorPrice']").val());
+                            var sponsorActivity = $("[name='sponsorActivity']").val();
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: "http://localhost:8081/platform/api/spnsor/phone/registerSponsor",
+                                contentType: "application/json",
+                                data:JSON.stringify({
+                                    "sponsorName":sponsorName,
+                                    "sponsorPersonName":sponsorPersonName,
+                                    "sponsorPrice":sponsorPrice,
+                                    "sponsorActivity":sponsorActivity,
+                                }),
+                                success: function (result) {
+                                    if (result.response.resStatus == '000') {
+                                        alert("新增企业信息成功")
+                                        location.reload();
+                                    } else {
+                                        alert(result.response.data)
+                                    }
+                                }
+                            });
+                        },
+                        cancel:function (index,layero) {
+                            layui.layer.close(index);
+                        }
+                    });
+                }
+            });
+        });
+    }
+</script>
+<!--活动管理-->
+<script type="text/html" id="updateActivity">
+    <form class="layui-form layui-form-pane" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">活动内容</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activityContent" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">活动开始时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="activityStatusTime"
+                           placeholder="yyyy-MM-dd HH:mm:ss">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">活动结束时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="activityEndTime" placeholder="yyyy-MM-dd HH:mm:ss">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">活动参与人数</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activityNumber" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">活动负责人</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activityPersonName" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">活动场地</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activityField" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+    </form>
+</script>
+<script type="text/html" id="registerActivity">
+    <form class="layui-form layui-form-pane" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">活动名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activityName" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">活动内容</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activityContent" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">活动开始时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="activityStatusTimes"
+                           placeholder="yyyy-MM-dd HH:mm:ss">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">活动结束时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="activityEndTimes" placeholder="yyyy-MM-dd HH:mm:ss">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">活动参与人数</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activityNumber" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">活动负责人</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activityPersonName" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">活动场地</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activityField" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+    </form>
+</script>
+<script type="text/javascript">
+    var userId=item.user.id;
+    function activity(){
+        layui.use('table', function(){
+            var table = layui.table;
+            table.render({
+                elem: '#test',
+                where:{"pageNum":1,"pageSize":100},
+                method: "post",
+                url:'http://localhost:8081/platform/api/activity/phone/getActivity',
+                parseData:function (result){
+                    return{
+                        "code": result.code,
+                        "data":result.response.data.sponserList.showList,
+                    }
+                },
+                title: '赞助企业信息'
+                ,cols: [[
+                    {field:'id', title:'ID', width:80, fixed: 'left'}
+                    ,{field:'activityName', title:'活动名称', width:120, edit: 'text'}
+                    ,{field:'activityContent', title:'活动内容', width:150}
+                    ,{field:'activityPersonName', title:'活动负责人', width:120}
+                    ,{field:'activityStatusTime', title:'活动开始时间', width:100}
+                    ,{field:'activityEndTime', title:'活动结束时间',width:100}
+                    ,{field:'activityField', title:'活动场地',width:100}
+                    ,{field:'activityNumber', title:'活动参与人数',width:100}
+                    ,{field:'createTime', title:'创建时间', width:180}
+                    ,{field:'updateTime', title:'更新时间', width:180}
+                    ,{field:'right', toolbar:"#barDemo", title:'操作栏', width:180}
+                ]]
+                ,page: false
+            });
+            //监听行工具事件
+            table.on('tool(test)', function(obj){
+                var data = obj.data;
+                if(obj.event === 'del'){
+                    layer.confirm('确定删除嘛', function(index){
+                        obj.del();
+                        $.get(
+                            "http://localhost:8081/platform/api/activity/phone/deleteActivity",
+                            {"activityId":data.id},
+                            function (result) {
+                                if (result.response.resStatus == '000') {
+                                    alert("清除活动信息成功")
+                                    location.reload();
+                                } else {
+                                    alert(result.response.data)
+                                }
+                            }
+                        );
+                    });
+                } else if(obj.event === 'edit'){
+                    //页面层-自定义
+                    layer.open({
+                        type: 1,
+                        title: "更新活动信息",
+                        shadeClose:true,
+                        skin: 'yourclass',
+                        content:$("#updateActivity").html(),
+                        btn:["确定","取消"],
+                        yes:function(res) {
+                            var activityId=data.id
+                            var activityContent=  $("[name='activityContent']").val()
+                            var activityStatusTime=  $("#activityStatusTime").val()
+                            var activityEndTime=  $("#activityEndTime").val()
+                            var activityNumber=  parseInt($("[name='activityNumber']").val())
+                            var activityPersonName=  $("[name='activityPersonName']").val()
+                            var activityField=  $("[name='activityField']").val()
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: "http://localhost:8081/platform/api/activity/phone/updateActivity",
+                                contentType: "application/json",
+                                data:JSON.stringify({
+                                    "activityId":activityId,
+                                    "activityContent":activityContent,
+                                    "activityStatusTime":activityStatusTime,
+                                    "activityEndTime":activityEndTime,
+                                    "activityNumber":activityNumber,
+                                    "activityField":activityField,
+                                    "activityPersonName":activityPersonName
+                                }),
+                                success: function (result) {
+                                    if (result.response.resStatus == '000') {
+                                        alert("更新活动信息成功")
+                                        location.reload();
+                                    } else {
+                                        alert(result.response.data)
+                                    }
+                                }
+                            });
+                        },
+                        cancel:function (index,layero) {
+                            layui.layer.close(index);
+                        }
+                    });
+                    layui.use('laydate', function(){
+                        var laydate = layui.laydate;
+                        //日期时间选择器
+                        laydate.render({
+                            elem: '#activityStatusTime'
+                            ,type: 'datetime',
+                        });
+                        //日期时间选择器
+                        laydate.render({
+                            elem: '#activityEndTime'
+                            ,type: 'datetime'
+                        });
+                    });
+                }else if(obj.event === 'insert'){
+                    //页面层-自定义
+                    layer.open({
+                        type: 1,
+                        title: "新增活动信息",
+                        shadeClose:true,
+                        skin: 'yourclass',
+                        content:$("#registerActivity").html(),
+                        btn:["确定","取消"],
+                        yes:function(res) {
+                            var activityName=$("[name='activityName']").val()
+                            var activityContent=  $("[name='activityContent']").val()
+                            var activityStatusTime=  $("#activityStatusTime").val()
+                            var activityEndTime=  $("#activityEndTime").val()
+                            var activityNumber=  parseInt($("[name='activityNumber']").val())
+                            var activityPersonName=  $("[name='activityPersonName']").val()
+                            var activityField=  $("[name='activityField']").val()
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: "http://localhost:8081/platform/api/activity/phone/registerActivity",
+                                contentType: "application/json",
+                                data:JSON.stringify({
+                                    "activityName":activityName,
+                                    "activityContent":activityContent,
+                                    "activityStatusTime":activityStatusTime,
+                                    "activityEndTime":activityEndTime,
+                                    "activityNumber":activityNumber,
+                                    "activityField":activityField,
+                                    "activityPersonName":activityPersonName
+                                }),
+                                success: function (result) {
+                                    if (result.response.resStatus == '000') {
+                                        alert("新增活动信息成功")
+                                        location.reload();
+                                    } else {
+                                        alert(result.response.data)
+                                    }
+                                }
+                            });
+                        },
+                        cancel:function (index,layero) {
+                            layui.layer.close(index);
+                        }
+                    });
+                    layui.use('laydate', function(){
+                        var laydate = layui.laydate;
+                        //日期时间选择器
+                        laydate.render({
+                            elem: '#activityStatusTimes'
+                            ,type: 'datetime',
+                        });
+                        //日期时间选择器
+                        laydate.render({
+                            elem: '#activityEndTimes'
+                            ,type: 'datetime'
+                        });
+                    });
+                }
+            });
+        });
+    }
+</script>
+<!--场地管理-->
+<script type="text/html" id="updateField">
+    <form class="layui-form layui-form-pane" action="">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">场地开始时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="fieldStatusTime"
+                           placeholder="yyyy-MM-dd HH:mm:ss">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">场地结束时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="fieldEndTime" placeholder="yyyy-MM-dd HH:mm:ss">
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<script type="text/html" id="registerField">
+    <form class="layui-form layui-form-pane" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">场地名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="fieldName" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">活动开始时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="fieldStatusTimes"
+                           placeholder="yyyy-MM-dd HH:mm:ss">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">活动结束时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="fieldEndTimes" placeholder="yyyy-MM-dd HH:mm:ss">
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<script type="text/javascript">
+    function field(){
+        layui.use('table', function(){
+            var table = layui.table;
+            table.render({
+                elem: '#test',
+                where:{"pageNum":1,"pageSize":100},
+                method: "post",
+                url:'http://localhost:8081/platform/api/field/phone/getField',
+                parseData:function (result){
+                    return{
+                        "code": result.code,
+                        "data":result.response.data.sponserList.showList,
+                    }
+                },
+                title: '赞助企业信息'
+                ,cols: [[
+                    {field:'id', title:'ID', width:80, fixed: 'left'}
+                    ,{field:'fieldName', title:'场地名称', width:120, edit: 'text'}
+                    ,{field:'fieldStatusUseTime', title:'场地开始使用时间', width:150}
+                    ,{field:'fieldEndUseTime', title:'场地结束使用时间', width:120}
+                    ,{field:'isUse', title:'是否在使用', width:100,templet:function (price) {
+                            if (price.isUse == '0'){
+                                return "否"
+                            }else {
+                                return "是"
+                            }
+                        }}
+                    ,{field:'createTime', title:'创建时间', width:180}
+                    ,{field:'updateTime', title:'更新时间', width:180}
+                    ,{field:'right', toolbar:"#barDemo", title:'操作栏', width:180}
+                ]]
+                ,page: false
+            });
+            //监听行工具事件
+            table.on('tool(test)', function(obj){
+                var data = obj.data;
+                if(obj.event === 'del'){
+                    layer.confirm('确定删除嘛', function(index){
+                        obj.del();
+                        $.get(
+                            "http://localhost:8081/platform/api/field/phone/deleteField",
+                            {"fieldId":data.id},
+                            function (result) {
+                                if (result.response.resStatus == '000') {
+                                    alert("清除场地信息成功")
+                                    location.reload();
+                                } else {
+                                    alert(result.response.data)
+                                }
+                            }
+                        );
+                    });
+                } else if(obj.event === 'edit'){
+                    //页面层-自定义
+                    layer.open({
+                        type: 1,
+                        title: "更新活动信息",
+                        shadeClose:true,
+                        skin: 'yourclass',
+                        content:$("#updateField").html(),
+                        btn:["确定","取消"],
+                        yes:function(res) {
+                            var fieldId=data.id
+                            var fieldStatusTime=  $("#fieldStatusTime").val()
+                            var fieldEndTime=  $("#fieldEndTime").val()
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: "http://localhost:8081/platform/api/field/phone/updateField",
+                                contentType: "application/json",
+                                data:JSON.stringify({
+                                    "fieldId":fieldId,
+                                    "fieldStatusTime":fieldStatusTime,
+                                    "fieldEndTime":fieldEndTime
+                                }),
+                                success: function (result) {
+                                    if (result.response.resStatus == '000') {
+                                        alert("更新场地信息成功")
+                                        location.reload();
+                                    } else {
+                                        alert(result.response.data)
+                                    }
+                                }
+                            });
+                        },
+                        cancel:function (index,layero) {
+                            layui.layer.close(index);
+                        }
+                    });
+                    layui.use('laydate', function(){
+                        var laydate = layui.laydate;
+                        //日期时间选择器
+                        laydate.render({
+                            elem: '#fieldStatusTime'
+                            ,type: 'datetime',
+                        });
+                        //日期时间选择器
+                        laydate.render({
+                            elem: '#fieldEndTime'
+                            ,type: 'datetime'
+                        });
+                    });
+                }else if(obj.event === 'insert'){
+                    //页面层-自定义
+                    layer.open({
+                        type: 1,
+                        title: "新增活动信息",
+                        shadeClose:true,
+                        skin: 'yourclass',
+                        content:$("#registerField").html(),
+                        btn:["确定","取消"],
+                        yes:function(res) {
+                            var fieldStatusTime=  $("#fieldStatusTime").val()
+                            var fieldName=  $("[name='fieldName']").val()
+                            var fieldEndTime=  $("#fieldEndTime").val()
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: "http://localhost:8081/platform/api/field/phone/registerField",
+                                contentType: "application/json",
+                                data:JSON.stringify({
+                                    "fieldStatusTime":fieldStatusTime,
+                                    "fieldName":fieldName,
+                                    "fieldEndTime":fieldEndTime
+                                }),
+                                success: function (result) {
+                                    if (result.response.resStatus == '000') {
+                                        alert("新增场地信息成功")
+                                        location.reload();
+                                    } else {
+                                        alert(result.response.data)
+                                    }
+                                }
+                            });
+                        },
+                        cancel:function (index,layero) {
+                            layui.layer.close(index);
+                        }
+                    });
+                    layui.use('laydate', function(){
+                        var laydate = layui.laydate;
+                        //日期时间选择器
+                        laydate.render({
+                            elem: '#fieldStatusTimes'
+                            ,type: 'datetime',
+                        });
+                        //日期时间选择器
+                        laydate.render({
+                            elem: '#fieldEndTimes'
+                            ,type: 'datetime'
+                        });
+                    });
+                }
+            });
+        });
+    }
+</script>
+<!--参与活动管理-->
+<script type="text/html" id="updateJoin">
+    <form class="layui-form layui-form-pane" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">参与人名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="joinName" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">参与活动</label>
+            <div class="layui-input-inline">
+                <input type="text" name="joinActivityName" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+    </form>
+</script>
+<script type="text/html" id="registerJoin">
+    <form class="layui-form layui-form-pane" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">参与人名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="joinName" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">参与活动</label>
+            <div class="layui-input-inline">
+                <input type="text" name="joinActivityName" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+    </form>
+</script>
+<script type="text/javascript">
+    function join(){
+        layui.use('table', function(){
+            var table = layui.table;
+            table.render({
+                elem: '#test',
+                where:{"pageNum":1,"pageSize":100},
+                method: "post",
+                url:'http://localhost:8081/platform/api/joinActivity/phone/getJoinActivity',
+                parseData:function (result){
+                    return{
+                        "code": result.code,
+                        "data":result.response.data.joinList.showList,
+                    }
+                },
+                title: '赞助企业信息'
+                ,cols: [[
+                    {field:'id', title:'ID', width:80, fixed: 'left'}
+                    ,{field:'joinName', title:'参与人员名称', width:120, edit: 'text'}
+                    ,{field:'joinActivityName', title:'参与活动', width:150}
+                    ,{field:'createTime', title:'创建时间', width:180}
+                    ,{field:'updateTime', title:'更新时间', width:180}
+                    ,{field:'right', toolbar:"#barDemo", title:'操作栏', width:180}
+                ]]
+                ,page: false
+            });
+            //监听行工具事件
+            table.on('tool(test)', function(obj){
+                var data = obj.data;
+                if(obj.event === 'del'){
+                    layer.confirm('确定删除嘛', function(index){
+                        obj.del();
+                        $.get(
+                            "http://localhost:8081/platform/api/joinActivity/phone/deleteJoinActivity",
+                            {"joinActivityId":data.id},
+                            function (result) {
+                                if (result.response.resStatus == '000') {
+                                    alert("清除活动信息成功")
+                                    location.reload();
+                                } else {
+                                    alert(result.response.data)
+                                }
+                            }
+                        );
+                    });
+                } else if(obj.event === 'edit'){
+                    //页面层-自定义
+                    layer.open({
+                        type: 1,
+                        title: "更新参与活动信息",
+                        shadeClose:true,
+                        skin: 'yourclass',
+                        content:$("#updateJoin").html(),
+                        btn:["确定","取消"],
+                        yes:function(res) {
+                            var joinActivityId=data.id
+                            var joinActivityName=  $("[name='joinActivityName']").val()
+                            var joinName=  $("[name='joinName']").val()
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: "http://localhost:8081/platform/api/joinActivity/phone/updateJoinActivity",
+                                contentType: "application/json",
+                                data:JSON.stringify({
+                                    "joinActivityId":joinActivityId,
+                                    "joinActivityName":joinActivityName,
+                                    "joinName":joinName
+                                }),
+                                success: function (result) {
+                                    if (result.response.resStatus == '000') {
+                                        alert("更新活动信息成功")
+                                        location.reload();
+                                    } else {
+                                        alert(result.response.data)
+                                    }
+                                }
+                            });
+                        },
+                        cancel:function (index,layero) {
+                            layui.layer.close(index);
+                        }
+                    });
+                }else if(obj.event === 'insert'){
+                    //页面层-自定义
+                    layer.open({
+                        type: 1,
+                        title: "新增参与活动信息",
+                        shadeClose:true,
+                        skin: 'yourclass',
+                        content:$("#registerJoin").html(),
+                        btn:["确定","取消"],
+                        yes:function(res) {
+                            var joinActivityName=  $("[name='joinActivityName']").val()
+                            var joinName=  $("[name='joinName']").val()
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: "http://localhost:8081/platform/api/joinActivity/phone/registerJoinActivity",
+                                contentType: "application/json",
+                                data:JSON.stringify({
+                                    "joinActivityName":joinActivityName,
+                                    "joinName":joinName
+                                }),
+                                success: function (result) {
+                                    if (result.response.resStatus == '000') {
+                                        alert("新增参与活动信息成功")
+                                        location.reload();
+                                    } else {
+                                        alert(result.response.data)
+                                    }
+                                }
+                            });
+                        },
+                        cancel:function (index,layero) {
+                            layui.layer.close(index);
+                        }
+                    });
+                }
+            });
+        });
+    }
+</script>
+<!--新闻管理-->
+<script type="text/html" id="updateJournalism">
+    <form class="layui-form layui-form-pane" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">新闻名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="journalismName" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">新闻内容</label>
+            <div class="layui-input-inline">
+                <input type="text" name="journalismContent" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">新闻发布地址</label>
+            <div class="layui-input-inline">
+                <input type="text" name="journalismPlace" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">新闻出版社</label>
+            <div class="layui-input-inline">
+                <input type="text" name="journalismPress" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">新闻发布时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="journalismTimes"
+                           placeholder="yyyy-MM-dd HH:mm:ss">
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<script type="text/html" id="registerJournalism">
+    <form class="layui-form layui-form-pane" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">新闻名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="journalismName" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">新闻内容</label>
+            <div class="layui-input-inline">
+                <input type="text" name="journalismContent" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">新闻发布地址</label>
+            <div class="layui-input-inline">
+                <input type="text" name="journalismPlace" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">新闻出版社</label>
+            <div class="layui-input-inline">
+                <input type="text" name="journalismPress" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">新闻发布时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" class="layui-input" id="journalismTime"
+                           placeholder="yyyy-MM-dd HH:mm:ss">
+                </div>
+            </div>
+        </div>
+    </form>
+</script>
+<script type="text/javascript">
+    function journalism(){
+        layui.use('table', function(){
+            var table = layui.table;
+            table.render({
+                elem: '#test',
+                where:{"pageNum":1,"pageSize":100},
+                method: "post",
+                url:'http://localhost:8081/platform/api/journalism/phone/getJournalism',
+                parseData:function (result){
+                    return{
+                        "code": result.code,
+                        "data":result.response.data.journalismList.showList,
+                    }
+                },
+                title: '赞助企业信息'
+                ,cols: [[
+                    {field:'id', title:'ID', width:80, fixed: 'left'}
+                    ,{field:'journalismName', title:'新闻标题', width:120, edit: 'text'}
+                    ,{field:'journalismContent', title:'新闻内容', width:150}
+                    ,{field:'journalismTime', title:'新闻发布时间', width:150}
+                    ,{field:'journalismPlace', title:'新闻发布地址', width:150}
+                    ,{field:'journalismPress', title:'新闻出版社', width:150}
+                    ,{field:'createTime', title:'创建时间', width:180}
+                    ,{field:'updateTime', title:'更新时间', width:180}
+                    ,{field:'right', toolbar:"#barDemo", title:'操作栏', width:180}
+                ]]
+                ,page: false
+            });
+            //监听行工具事件
+            table.on('tool(test)', function(obj){
+                var data = obj.data;
+                if(obj.event === 'del'){
+                    layer.confirm('确定删除嘛', function(index){
+                        obj.del();
+                        $.get(
+                            "http://localhost:8081/platform/api/journalism/phone/deleteJournalism",
+                            {"journalismId":data.id},
+                            function (result) {
+                                if (result.response.resStatus == '000') {
+                                    alert("清除新闻信息成功")
+                                    location.reload();
+                                } else {
+                                    alert(result.response.data)
+                                }
+                            }
+                        );
+                    });
+                } else if(obj.event === 'edit'){
+                    //页面层-自定义
+                    layer.open({
+                        type: 1,
+                        title: "更新新闻信息",
+                        shadeClose:true,
+                        skin: 'yourclass',
+                        content:$("#updateJournalism").html(),
+                        btn:["确定","取消"],
+                        yes:function(res) {
+                            var journalismName=  $("[name='journalismName']").val()
+                            var journalismContent=  $("[name='journalismContent']").val()
+                            var journalismPlace=  $("[name='journalismPlace']").val()
+                            var journalismPress=  $("[name='journalismPress']").val()
+                            var journalismTime=  $("#journalismTimes").val()
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: "http://localhost:8081/platform/api/journalism/phone/updateJournalism",
+                                contentType: "application/json",
+                                data:JSON.stringify({
+                                    "journalismId":data.id,
+                                    "journalismName":journalismName,
+                                    "journalismContent":journalismContent,
+                                    "journalismPlace":journalismPlace,
+                                    "journalismPress":journalismPress,
+                                    "journalismTime":journalismTime
+                                }),
+                                success: function (result) {
+                                    if (result.response.resStatus == '000') {
+                                        alert("更新新闻信息成功")
+                                        location.reload();
+                                    } else {
+                                        alert(result.response.data)
+                                    }
+                                }
+                            });
+                        },
+                        cancel:function (index,layero) {
+                            layui.layer.close(index);
+                        }
+                    });
+                    layui.use('laydate', function(){
+                        var laydate = layui.laydate;
+                        //日期时间选择器
+                        laydate.render({
+                            elem: '#journalismTimes'
+                            ,type: 'datetime',
+                        });
+                    });
+                }else if(obj.event === 'insert'){
+                    //页面层-自定义
+                    layer.open({
+                        type: 1,
+                        title: "新增新闻信息",
+                        shadeClose:true,
+                        skin: 'yourclass',
+                        content:$("#registerJournalism").html(),
+                        btn:["确定","取消"],
+                        yes:function(res) {
+                            var journalismName=  $("[name='journalismName']").val()
+                            var journalismContent=  $("[name='journalismContent']").val()
+                            var journalismPlace=  $("[name='journalismPlace']").val()
+                            var journalismPress=  $("[name='journalismPress']").val()
+                            var journalismTime=  $("#journalismTime").val()
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: "http://localhost:8081/platform/api/journalism/phone/registerJournalism",
+                                contentType: "application/json",
+                                data:JSON.stringify({
+                                    "journalismName":journalismName,
+                                    "journalismContent":journalismContent,
+                                    "journalismPlace":journalismPlace,
+                                    "journalismPress":journalismPress,
+                                    "journalismTime":journalismTime
+                                }),
+                                success: function (result) {
+                                    if (result.response.resStatus == '000') {
+                                        alert("新增新闻信息成功")
+                                        location.reload();
+                                    } else {
+                                        alert(result.response.data)
+                                    }
+                                }
+                            });
+                        },
+                        cancel:function (index,layero) {
+                            layui.layer.close(index);
+                        }
+                    });
+                    layui.use('laydate', function(){
+                        var laydate = layui.laydate;
+                        //日期时间选择器
+                        laydate.render({
+                            elem: '#journalismTime'
+                            ,type: 'datetime',
+                        });
+                    });
+                }
+            });
+        });
+    }
+</script>
+<!--活动经费管理-->
+<script type="text/html" id="updateActivityFunds">
+    <form class="layui-form layui-form-pane" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">活动名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activityName" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">活动经费</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activityFunds" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+    </form>
+</script>
+<script type="text/html" id="registerActivityFunds">
+    <form class="layui-form layui-form-pane" action="">
+        <div class="layui-form-item">
+            <label class="layui-form-label">活动名称</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activityName" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">活动经费</label>
+            <div class="layui-input-inline">
+                <input type="text" name="activityFunds" lay-verify="required" placeholder="请输入"
+                       autoComplete="off" class="layui-input">
+            </div>
+        </div>
+    </form>
+</script>
+<script type="text/javascript">
+    function activityFunds(){
+        layui.use('table', function(){
+            var table = layui.table;
+            table.render({
+                elem: '#test',
+                where:{"pageNum":1,"pageSize":100},
+                method: "post",
+                url:'http://localhost:8081/platform/api/activityFunds/phone/getActivityFunds',
+                parseData:function (result){
+                    return{
+                        "code": result.code,
+                        "data":result.response.data.activityFundsList.showList,
+                    }
+                },
+                title: '赞助企业信息'
+                ,cols: [[
+                    {field:'id', title:'ID', width:80, fixed: 'left'}
+                    ,{field:'activityName', title:'活动名称', width:120, edit: 'text'}
+                    ,{field:'activityFunds', title:'活动经费', width:150,templet:function (price) {
+                            return price.activityFunds/100+'元'
+                        }}
+                    ,{field:'createTime', title:'创建时间', width:180}
+                    ,{field:'updateTime', title:'更新时间', width:180}
+                    ,{field:'right', toolbar:"#barDemo", title:'操作栏', width:180}
+                ]]
+                ,page: false
+            });
+            //监听行工具事件
+            table.on('tool(test)', function(obj){
+                var data = obj.data;
+                if(obj.event === 'del'){
+                    layer.confirm('确定删除嘛', function(index){
+                        obj.del();
+                        $.get(
+                            "http://localhost:8081/platform/api/activityFunds/phone/deleteActivityFunds",
+                            {"activityFundsId":data.id},
+                            function (result) {
+                                if (result.response.resStatus == '000') {
+                                    alert("清除活动经费信息成功")
+                                    location.reload();
+                                } else {
+                                    alert(result.response.data)
+                                }
+                            }
+                        );
+                    });
+                } else if(obj.event === 'edit'){
+                    //页面层-自定义
+                    layer.open({
+                        type: 1,
+                        title: "更新活动经费信息",
+                        shadeClose:true,
+                        skin: 'yourclass',
+                        content:$("#updateActivityFunds").html(),
+                        btn:["确定","取消"],
+                        yes:function(res) {
+                            var activityName=  $("[name='activityName']").val()
+                            var activityFunds=parseInt($("[name='activityFunds']").val())
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: "http://localhost:8081/platform/api/activityFunds/phone/updateActivityFunds",
+                                contentType: "application/json",
+                                data:JSON.stringify({
+                                    "activityFundsId":data.id,
+                                    "activityName":activityName,
+                                    "activityFunds":activityFunds
+                                }),
+                                success: function (result) {
+                                    if (result.response.resStatus == '000') {
+                                        alert("更新新闻信息成功")
+                                        location.reload();
+                                    } else {
+                                        alert(result.response.data)
+                                    }
+                                }
+                            });
+                        },
+                        cancel:function (index,layero) {
+                            layui.layer.close(index);
+                        }
+                    });
+                }else if(obj.event === 'insert'){
+                    //页面层-自定义
+                    layer.open({
+                        type: 1,
+                        title: "新增活动经费信息",
+                        shadeClose:true,
+                        skin: 'yourclass',
+                        content:$("#registerActivityFunds").html(),
+                        btn:["确定","取消"],
+                        yes:function(res) {
+                            var activityName=  $("[name='activityName']").val()
+                            var activityFunds=parseInt($("[name='activityFunds']").val())
+                            $.ajax({
+                                type: "POST",
+                                dataType: "json",
+                                url: "http://localhost:8081/platform/api/activityFunds/phone/registerActivityFunds",
+                                contentType: "application/json",
+                                data:JSON.stringify({
+                                    "activityName":activityName,
+                                    "activityFunds":activityFunds
+                                }),
+                                success: function (result) {
+                                    if (result.response.resStatus == '000') {
+                                        alert("新增活动经费信息成功")
+                                        location.reload();
+                                    } else {
+                                        alert(result.response.data)
+                                    }
+                                }
+                            });
+                        },
+                        cancel:function (index,layero) {
+                            layui.layer.close(index);
+                        }
+                    });
+                }
+            });
+        });
+    }
+</script>
+</html>

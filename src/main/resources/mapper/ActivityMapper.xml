@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deal.demo.dao.ActivityMapper">
+
+  <resultMap id="BaseResultMap" type="com.deal.demo.model.Activity">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="activity_name" jdbcType="VARCHAR" property="activityName" />
+    <result column="activity_content" jdbcType="VARCHAR" property="activityContent" />
+    <result column="activity_person_name" jdbcType="VARCHAR" property="activityPersonName" />
+    <result column="activity_status_time" jdbcType="VARCHAR" property="activityStatusTime" />
+    <result column="activity_end_time" jdbcType="VARCHAR" property="activityEndTime" />
+    <result column="acticity_filed" jdbcType="VARCHAR" property="activityField" />
+    <result column="acticity_number" jdbcType="INTEGER" property="activityNumber" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id,activity_name,activity_content, activity_person_name,activity_status_time,activity_end_time,acticity_filed,acticity_number,create_time, update_time
+  </sql>
+  <!--根据条件获取活动信息-->
+  <select id="getActivity" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List"/>
+    from
+        client_activity
+    <where>
+      1=1
+    </where>
+    ORDER BY create_time DESC
+  </select>
+  <!--新增活动信息-->
+  <insert id="insertSelective" parameterType="com.deal.demo.model.Activity" useGeneratedKeys="true" keyProperty="id">
+    insert into client_activity
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityName)">
+        activity_name,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityContent)">
+        activity_content,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityPersonName)">
+        activity_person_name,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityStatusTime)">
+        activity_status_time,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityEndTime)">
+        activity_end_time,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityField)">
+        acticity_filed,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityNumber)">
+        acticity_number,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(createTime)">
+        create_time
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityName)">
+        #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityContent)">
+        #{activityContent,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityPersonName)">
+        #{activityPersonName, jdbcType = VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityStatusTime)">
+        #{activityStatusTime,jdbcType=INTEGER},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityEndTime)">
+        #{activityEndTime,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityField)">
+        #{activityField,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityNumber)">
+        #{activityNumber,jdbcType=INTEGER},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(createTime)">
+        #{createTime,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  <!--根据主键ID获取此赞助企业信息-->
+  <select id="selectActivity" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List"/>
+    from
+        client_activity
+    <where>
+        id=#{activityId,jdbcType=INTEGER}
+    </where>
+  </select>
+  <!--更新活动基础信息-->
+  <update id="updateActivity" parameterType="com.deal.demo.model.Activity">
+    update client_activity
+    <set>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityName)">
+        activity_name= #{activityName,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityContent)">
+        activity_content = #{activityContent,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityPersonName)">
+        activity_person_name=#{activityPersonName, jdbcType = VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityStatusTime)">
+        activity_status_time=#{activityStatusTime,jdbcType=INTEGER},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityEndTime)">
+        activity_end_time=#{activityEndTime,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityField)">
+        acticity_filed=#{activityField,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(activityNumber)">
+        acticity_number = #{activityNumber,jdbcType=INTEGER},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(updateTime)">
+        update_time=#{updateTime,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--清除赞助企业信息-->
+  <delete id="deleteActivity" parameterType="java.lang.Integer">
+    delete from
+        client_activity
+    where
+        id=#{activityId,jdbcType=INTEGER}
+  </delete>
+</mapper>

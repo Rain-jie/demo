@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.deal.demo.dao.JournalismMapper">
+
+  <resultMap id="BaseResultMap" type="com.deal.demo.model.Journalism">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="journalism_name" jdbcType="VARCHAR" property="journalismName" />
+    <result column="journalism_content" jdbcType="VARCHAR" property="journalismContent" />
+    <result column="journalism_time" jdbcType="VARCHAR" property="journalismTime" />
+    <result column="journalism_place" jdbcType="VARCHAR" property="journalismPlace" />
+    <result column="journalism_press" jdbcType="VARCHAR" property="journalismPress" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="update_time" jdbcType="VARCHAR" property="updateTime" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id,journalism_name,journalism_content, journalism_time,journalism_place,journalism_press,create_time, update_time
+  </sql>
+  <!--根据条件获取活动信息-->
+  <select id="getJournalism" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+    select
+        <include refid="Base_Column_List"/>
+    from
+        client_journalism
+    <where>
+      1=1
+    </where>
+    ORDER BY create_time DESC
+  </select>
+  <!--新增活动信息-->
+  <insert id="insertJournalism" parameterType="com.deal.demo.model.Journalism" useGeneratedKeys="true" keyProperty="id">
+    insert into client_journalism
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(journalismName)">
+        journalism_name,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(journalismContent)">
+        journalism_content,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(journalismTime)">
+        journalism_time,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(journalismPlace)">
+        journalism_place,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(journalismPress)">
+        journalism_press,
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(createTime)">
+        create_time
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(journalismName)">
+        #{journalismName,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(journalismContent)">
+        #{journalismContent,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(journalismTime)">
+        #{journalismTime, jdbcType = VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(journalismPlace)">
+        #{journalismPlace,jdbcType=INTEGER},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(journalismPress)">
+        #{journalismPress,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(createTime)">
+        #{createTime,jdbcType=VARCHAR}
+      </if>
+    </trim>
+  </insert>
+  <!--更新活动基础信息-->
+  <update id="updateJournalism" parameterType="com.deal.demo.model.Journalism">
+    update client_journalism
+    <set>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(journalismName)">
+        journalism_name= #{journalismName,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(journalismContent)">
+        journalism_content = #{journalismContent,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(journalismTime)">
+        journalism_time=#{journalismTime, jdbcType = VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(journalismPlace)">
+        journalism_place=#{journalismPlace,jdbcType=INTEGER},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(journalismPress)">
+        journalism_press= #{journalismPress,jdbcType=VARCHAR},
+      </if>
+      <if test="@com.deal.demo.utils.trapeze.MyBatisIsEmptyUtil@isNotEmpty(updateTime)">
+        update_time=#{updateTime,jdbcType=VARCHAR}
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <!--清除赞助企业信息-->
+  <delete id="deleteJournalism" parameterType="java.lang.Integer">
+    delete from
+        client_journalism
+    where
+        id=#{journalismId,jdbcType=INTEGER}
+  </delete>
+</mapper>

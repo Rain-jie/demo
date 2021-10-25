@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户登录</title>
+    <link type="text/css" rel="stylesheet" href="./js/layui/css/layui.css">
+    <script type="text/javascript" src="./js/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="./js/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="./js/layui/layui.js"></script>
+</head>
+<style type="text/css">
+    html{height: 100%}
+    body{
+        background-image: url("/platform/img/bg.jpg");
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+    }
+    *{
+        margin: 0;
+        padding: 0;
+    }
+    #box{
+        height:40%;width:30%;
+        position:fixed;
+        top:0;right:0;bottom:0;left:0;
+        margin:auto;
+    }
+</style>
+<body>
+   <div id="box">
+           <div class="message">
+              <font size="4">
+                  校园活动管理系统平台登录
+              </font>
+           </div>
+           <form method="post" class="layui-form" >
+               <input name="Username" placeholder="用户账号"  type="text" lay-verify="required" class="layui-input" >
+               <br/>
+               <input name="Password" lay-verify="required" placeholder="密码"  type="password" class="layui-input">
+               <br/>
+               <input value="登录" lay-submit lay-filter="login"onclick="login()" style="width:100%;" type="button">
+           </form>
+   </div>
+</body>
+
+<script>
+    function login() {
+        var userName=$("[name='Username']").val();
+        var userPwd=$("[name='Password']").val();
+        var code=$("[name='code']").val();
+        if (userName!=""){
+            if (userPwd!=null){
+                if (code!=""){
+                    $.post(
+                        "http://localhost:8081/platform/api/user/phone/loginUser",
+                        {
+                            "userAccount":userName,
+                            "userPassword":userPwd
+                        },
+                        function (result) {
+                            if(result.response.resStatus == '000' ){
+                                //把用户信息存入会话 sessionStorage
+                                window.sessionStorage.setItem("userId",JSON.stringify(result.response.data));
+                                location.href="/platform/index.html";
+                            }else{
+                                alert(result.response.data)
+                            }
+                        }
+                    )
+                } else{
+                    alert("验证码必填")
+                }
+            } else{
+                alert("密码为必填")
+            }
+        } else{
+            alert("用户名必填")
+        }
+    }
+</script>
+</html>
