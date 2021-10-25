@@ -132,10 +132,10 @@
             </plugin>
         </plugins>
     </build>
-         <distributionManagement>
+ <distributionManagement>
     <repository>
       <id>deploymentRepo</id>
-      <url>http://host:port/content/groups/public</url>
+      <url>http://192.168.187.128:8081/content/groups/public</url>
     </repository>
   </distributionManagement>
 </project>
