@@ -132,7 +132,7 @@
             </plugin>
         </plugins>
     </build>
-<!-- 使用分发管理将本项目打成jar包，直接上传到指定服务器
+<!-- 使用分发管理将本项目打成jar包，直接上传到指定服务器 -->
   <distributionManagement>
 	<!--正式版本-->
 	<repository>
@@ -140,7 +140,7 @@
 		<id>deploymentRepo</id>
 		<!-- 这个名称自己定义 -->
 		<name>Release repository</name>
-		<url>http://192.168.187.128:8081/repository/deploymentRepo/</url>
+		<url>http://192.168.187.128:8081/opt/tomcat/webapps/repository/deploymentRepo/</url>
 	</repository>
 	<!--快照
 	<snapshotRepository>
@@ -149,5 +149,5 @@
 		<url>http://192.168.1.105/repository/yang/</url>
 	</snapshotRepository>-->
   </distributionManagement>
- -->
+
 </project>
