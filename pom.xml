@@ -135,7 +135,7 @@
          <distributionManagement>
     <repository>
       <id>deploymentRepo</id>
-      <url>http://repo.maven.apache.org/maven2</url>
+      <url>http://host:port/content/groups/public</url>
     </repository>
   </distributionManagement>
 </project>
