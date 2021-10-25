@@ -132,5 +132,8 @@
             </plugin>
         </plugins>
     </build>
-
+<distributionManagement>
+  <downloadUrl>http://jcat.ericsson.org/my-project</downloadUrl>  
+  <status>deployed</status>  
+</distributionManagement>
 </project>
