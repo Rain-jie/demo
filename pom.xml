@@ -135,7 +135,7 @@
          <distributionManagement>
     <repository>
       <id>deploymentRepo</id>
-      <url>scp://repo/maven2</url>
+      <url>http://repo.maven.apache.org/maven2</url>
     </repository>
   </distributionManagement>
 </project>
