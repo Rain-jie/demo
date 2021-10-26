@@ -93,11 +93,6 @@
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>2.1.4</version>
         </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
-        </dependency>
         <!--provided表明该包只在编译和测试的时候用。所以，当启动tomcat的时候，就不会冲突了  在使用tomcat时，屏蔽boot的内嵌tomcat-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
