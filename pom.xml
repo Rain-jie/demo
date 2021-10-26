@@ -136,6 +136,11 @@
     <repository>    
       <id>deploymentRepo</id>
       <url>http://192.168.187.128:8081/</url>       
-    </repository>      
+    </repository>   
+      <server>
+      <id>deploymentRepo</id>
+      <username>repouser</username>
+      <password>repopwd</password>
+    </server>
   </distributionManagement>       
 </project>
