@@ -119,6 +119,10 @@
     <repository>   
       <id>deploymentRepo</id>      
       <url>http://192.168.187.128:8081/</url>       
-    </repository>   
+    </repository> 
+    <snapshotRepository>    
+      <id>deploymentRepo</id>    
+      <url>http://192.168.187.128:8081/</url>
+    </snapshotRepository> 
   </distributionManagement>   
 </project>
