@@ -118,11 +118,11 @@
    <distributionManagement>    
     <repository>   
       <id>deploymentRepo</id>      
-      <url>http://maven.aliyun.com/nexus/content/repositories/central</url>       
+      <url>http://192.168.187.128:8081</url>       
     </repository> 
     <snapshotRepository>    
       <id>deploymentRepo</id>    
-      <url>http://maven.aliyun.com/nexus/content/repositories/central</url>
+      <url>http://192.168.187.128:8081</url>
     </snapshotRepository> 
   </distributionManagement>   
 </project>
