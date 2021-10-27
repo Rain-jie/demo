@@ -115,10 +115,4 @@
             </plugin>
         </plugins>
     </build>
-    <distributionManagement>    
-    <repository>    
-      <id>deploymentRepo</id>
-      <url>http://192.168.187.128:8081/</url>       
-    </repository>   
-  </distributionManagement>       
 </project>
