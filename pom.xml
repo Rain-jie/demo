@@ -85,7 +85,6 @@
     </dependencies>
     <packaging>war</packaging>
     <build>
-       <finalName>demo</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
