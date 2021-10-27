@@ -96,11 +96,11 @@
    <distributionManagement>    
     <repository>   
       <id>deploymentRepo</id>      
-      <url>http://192.168.187.128:8081</url>       
+      <url>http://192.168.187.128:8083</url>       
     </repository> 
     <snapshotRepository>    
       <id>deploymentRepo</id>    
-      <url>http://192.168.187.128:8081</url>
+      <url>http://192.168.187.128:8083</url>
     </snapshotRepository> 
   </distributionManagement>   
 </project>
