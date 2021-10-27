@@ -21,7 +21,10 @@ public class UserController extends ControllerException {
     private ResponseHead responseHead = createResponse();
     @Autowired
     private UserService userService;
-
+    @RequestMapping(value = "/phone/jenkinsDemo",method = RequestMethod.GET)
+    public  String jenkinsDemo(){
+        return "hello word";
+    }
     /**
      * 用户登录方法
      * @param response
