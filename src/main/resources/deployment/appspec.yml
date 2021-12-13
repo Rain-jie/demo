@@ -1,0 +1,48 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /usr/local/src/software/tomcat/epictopia-tomacat-8.5.71-8081/webapps/demo
+hooks:
+  #BeforeInstall:
+    # location: scripts/install_dependencies.sh
+    #  timeout: 300
+    #  runas: root
+  #AfterInstall:
+    # location: scripts/change_permissions.sh
+    #  timeout: 300
+    #  runas: root
+  ApplicationStart:
+    - location: deployment/applincationstop.sh
+      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: deployment/applincationstop.sh
+      timeout: 300
+      runas: root
+
+
+#AWS官网所提供的 appspec.yml文件内格式内容 需严格按照此格式进行编写
+#version: 0.0
+#os: linux
+#files:
+#  - source: /
+#    destination: /var/www/html/WordPress
+#hooks:
+#  BeforeInstall:
+#    - location: scripts/install_dependencies.sh
+#      timeout: 300
+#      runas: root
+#  AfterInstall:
+#    - location: scripts/change_permissions.sh
+#      timeout: 300
+#      runas: root
+#  ApplicationStart:
+#    - location: scripts/start_server.sh
+#    - location: scripts/create_test_db.sh
+#      timeout: 300
+#      runas: root
+#  ApplicationStop:
+#    - location: scripts/stop_server.sh
+#      timeout: 300
+#      runas: root
