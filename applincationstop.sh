@@ -1,9 +1,10 @@
 #!/bin/sh
 # func:自动监控tomcat脚本并且执行重启操作
 #tomcat启动程序(这里注意Tomcat实际安装的路径)
-
+#刷新并立即生效 profile配置的为jdk环境变量
 source /etc/profile
-
+#将文件打包
+jar -cvf demo.war .
 
 StartTomcat=/usr/local/src/software/tomcat/epictopia-tomacat-8.5.71-8081/bin/startup.sh
 TomcatWorkCache=/usr/local/src/software/tomcat/epictopia-tomacat-8.5.71-8081/work
@@ -16,8 +17,8 @@ TomcatWebapps=/usr/local/src/software/tomcat/epictopia-tomacat-8.5.71-8081/webap
 #清理缓存后在启动服务
 
 #第一步 清理旧服务遗留
-rm -rf $TomcatWebapps/epictopia
-rm -rf $TomcatWebapps/epictopia.war
+rm -rf $TomcatWebapps/demo
+rm -rf $TomcatWebapps/demo.war
 
 #第二步 清理Tomcat缓存
 rm -rf $TomcatWorkCache/Catalina
