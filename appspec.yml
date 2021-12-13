@@ -1,7 +1,7 @@
 version: 0.0
 os: linux
 files:
-   source: /
+  - source: /
     destination: /usr/local/src/software/tomcat/epictopia-tomacat-8.5.71-8081/webapps
 hooks:
   #BeforeInstall:
@@ -18,6 +18,6 @@ hooks:
     #  timeout: 300
     #  runas: root /usr/local/src/software/tomcat/epictopia-tomacat-8.5.71-8081/bin
   ApplicationStop:
-      location: scripts//usr/local/src/software/tomcat/epictopia-tomacat-8.5.71-8081/bin/applincationstop.sh
+    - location: scripts/usr/local/src/software/tomcat/epictopia-tomacat-8.5.71-8081/bin/applincationstop.sh
       timeout: 300
       runas: root
