@@ -17,7 +17,7 @@ hooks:
       timeout: 300
       runas: root
   ApplicationStop:
-    - location: applincationstop.sh
+    #- location: applincationstop.sh
       timeout: 300
       runas: root
 #测试
