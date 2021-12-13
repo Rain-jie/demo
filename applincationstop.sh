@@ -1,6 +1,12 @@
 #!/bin/sh
 # func:自动监控tomcat脚本并且执行重启操作
 #tomcat启动程序(这里注意Tomcat实际安装的路径)
+
+export JAVA_HOME=/usr/local/src/software/jdk/jdk1.8.0_301
+export PATH=$JAVA_HOME/bin:$PATH
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+
+
 StartTomcat=/usr/local/src/software/tomcat/epictopia-tomacat-8.5.71-8081/bin/startup.sh
 TomcatWorkCache=/usr/local/src/software/tomcat/epictopia-tomacat-8.5.71-8081/work
 TomcatConfCache=/usr/local/src/software/tomcat/epictopia-tomacat-8.5.71-8081/conf
