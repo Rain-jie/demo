@@ -13,11 +13,11 @@ hooks:
     #  timeout: 300
     #  runas: root
   ApplicationStart:
-    - location: /deployment/applincationstop.sh
+    - location: applincationstop.sh
       timeout: 300
       runas: root
   ApplicationStop:
-    - location: /deployment/applincationstop.sh
+    - location: applincationstop.sh
       timeout: 300
       runas: root
 #测试
