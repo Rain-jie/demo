@@ -1,6 +1,10 @@
 #!/bin/sh
 # func:自动监控tomcat脚本并且执行重启操作
 #tomcat启动程序(这里注意Tomcat实际安装的路径)
+#JAVA_HOME与JRE_HOME
+export JAVA_HOME=/usr/local/src/software/jdk/jdk1.8.0_301
+export PATH=$JAVA_HOME/bin:$PATH
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
 #刷新并立即生效 profile配置的为jdk环境变量
 source /etc/profile
 #将文件打包
