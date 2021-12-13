@@ -16,10 +16,10 @@ hooks:
     - location: /usr/local/src/software/tomcat/epictopia-tomacat-8.5.71-8081/bin/applincationstop.sh
       timeout: 300
       runas: root
-#  ApplicationStop:
-#    - location: /usr/local/src/software/tomcat/epictopia-tomacat-8.5.71-8081/bin/applincationstop.sh
-#      timeout: 300
-#      runas: root
+  ApplicationStop:
+    - location: /usr/local/src/software/tomcat/epictopia-tomacat-8.5.71-8081/bin/applincationstop.sh
+      timeout: 300
+      runas: root
 
 
 #AWS官网所提供的 appspec.yml文件内格式内容 需严格按照此格式进行编写
