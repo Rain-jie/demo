@@ -20,3 +20,4 @@ hooks:
     - location: /deployment/applincationstop.sh
       timeout: 300
       runas: root
+#测试
