@@ -1,0 +1,22 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /usr/local/src/software/tomcat/epictopia-tomacat-8.5.71-8081/webapps/demo
+hooks:
+  #BeforeInstall:
+    # location: scripts/install_dependencies.sh
+    #  timeout: 300
+    #  runas: root
+  #AfterInstall:
+    # location: scripts/change_permissions.sh
+    #  timeout: 300
+    #  runas: root
+  ApplicationStart:
+    - location: /deployment/applincationstop.sh
+      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: /deployment/applincationstop.sh
+      timeout: 300
+      runas: root
